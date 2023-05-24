@@ -17,17 +17,26 @@
 import subprocess
 
 
+import subprocess
+
+
 def ping_ip_addresses(ip_addresses):
-    availble_ips = list()
-    unavailble_ips = list()
+    reachable = []
+    unreachable = []
+
     for ip in ip_addresses:
-        reply = subprocess.run(['ping', ip])
-        if reply.returncode == 0:
-            availble_ips.append(ip)
+        result = subprocess.run(
+            ["ping", "-c", "3", ip],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        if result.returncode == 0:
+            reachable.append(ip)
         else:
-            unavailble_ips.append(ip)
-    return availble_ips, unavailble_ips
+            unreachable.append(ip)
+
+    return reachable, unreachable
 
 
-list_of_ips = ["1.1.1", "8.8.8.8", "8.8.4.4", "8.8.7.1"]
-print(ping_ip_addresses(list_of_ips))
+if __name__ == "__main__":
+    print(ping_ip_addresses(["10.1.1.1", "8.8.8.8"]))
